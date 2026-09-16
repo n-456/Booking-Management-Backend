@@ -1,15 +1,19 @@
 package shop.dao;
 
+import org.springframework.stereotype.Repository;
 import shop.database.DatabaseHelper;
 import shop.model.Customer;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Repository
 public class CustomerDAO {
 
+    public CustomerDAO() {}
+
     // CREATE - Tạo bảng
-    public static void createTable() {
+    public void createTable() {
         Connection conn = null;
         Statement stmt = null;
 
@@ -37,7 +41,7 @@ public class CustomerDAO {
     }
 
     // INSERT - Thêm customer mới
-    public static boolean insertCustomer(String name,String phone, String email, String pass) {
+    public boolean addCustomer(String name, String phone, String email, String pass) {
         Connection conn = null;
         PreparedStatement pstmt = null;
 
@@ -67,7 +71,7 @@ public class CustomerDAO {
     }
 
     // SELECT - Lấy tất cả customer
-    public static List<Customer> getAllCustomers() {
+    public List<Customer> getAllCustomers() {
         List<Customer> customers = new ArrayList<>();
         Connection conn = null;
         Statement stmt = null;
@@ -102,7 +106,7 @@ public class CustomerDAO {
     }
 
     // SELECT - Lấy customer theo ID
-    public static Customer getCustomerById(int id) {
+    public Customer getCustomerById(int id) {
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
@@ -136,16 +140,24 @@ public class CustomerDAO {
     }
 
     // UPDATE - Cập nhật customer
-    public static boolean updateCustomer(int id, String name) {
+    public boolean updateCustomer(int id, String name, String phone, String email, String pass) {
         Connection conn = null;
         PreparedStatement pstmt = null;
 
         try {
             conn = DatabaseHelper.getConnection();
-            String sql = "UPDATE customers SET name = ? WHERE id = ?";
+            String sql = "UPDATE customers " +
+                    "SET name = COALESCE(NULLIF(?, ''), name), " +
+                    "   phone = COALESCE(NULLIF(?, ''), phone), " +
+                    "   email = COALESCE(NULLIF(?, ''), email), " +
+                    "   pass = COALESCE(NULLIF(?, ''), pass) " +
+                    "WHERE id = ?";
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, name);
-            pstmt.setInt(2, id);
+            pstmt.setString(2, phone);
+            pstmt.setString(3, email);
+            pstmt.setString(4, pass);
+            pstmt.setInt(5, id);
 
             int rowsUpdated = pstmt.executeUpdate();
             if (rowsUpdated > 0) {
@@ -163,7 +175,7 @@ public class CustomerDAO {
     }
 
     // DELETE - Xóa customer
-    public static boolean deleteCustomer(int id) {
+    public boolean deleteCustomer(int id) {
         Connection conn = null;
         PreparedStatement pstmt = null;
 
