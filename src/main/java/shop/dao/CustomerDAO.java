@@ -199,4 +199,40 @@ public class CustomerDAO {
 
         return false;
     }
+
+    public Customer checkLogin(String email, String pass) {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        Customer customer = null;
+
+        try {
+            conn = DatabaseHelper.getConnection();
+            String sql = "SELECT * " +
+                    "FROM customers " +
+                    "WHERE email = ? " +
+                    "AND pass = ?";
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, email);
+            pstmt.setString(2, pass);
+
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                customer = new Customer(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getString("phone"),
+                        rs.getString("email"),
+                        rs.getString("pass"),
+                        rs.getTimestamp("created_at").toLocalDateTime()
+                );
+            }
+        } catch (SQLException e) {
+            System.out.println("✗ Error check login: " + e.getMessage());
+        } finally {
+            DatabaseHelper.close(pstmt, conn);
+        }
+        return customer;
+    }
 }
