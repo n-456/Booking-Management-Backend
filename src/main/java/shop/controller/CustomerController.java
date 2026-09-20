@@ -1,22 +1,32 @@
 package shop.controller;
 
-import shop.dao.CustomerDAO;
+import org.springframework.beans.factory.annotation.Autowired;
 import shop.model.Customer;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import shop.service.CustomerService;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("customers")
-@CrossOrigin(origins = "http://127.0.0.1:5500")
+@CrossOrigin(origins = "*")
+//@CrossOrigin(origins = "http://localhost:5500")
 
 public class CustomerController {
 
+    private final CustomerService customerService;
+
+    @Autowired
+    public CustomerController(CustomerService customerService) {
+        this.customerService = customerService;
+    }
+
+
     @GetMapping("/{id}")
     public ResponseEntity<Customer> getAllCustomer(@PathVariable int id) {
-        Customer customer = CustomerDAO.getCustomerById(id);
+        Customer customer = customerService.getCustomerById(id);
 
         if(customer != null) {
             return ResponseEntity
@@ -31,7 +41,7 @@ public class CustomerController {
 
     @GetMapping
     ResponseEntity<List<Customer>> getCustomer() {
-        List<Customer> customers = CustomerDAO.getAllCustomers();
+        List<Customer> customers = customerService.getAllCustomers();
 
         if(customers != null) {
             return ResponseEntity
@@ -46,7 +56,7 @@ public class CustomerController {
 
     @PostMapping
     public ResponseEntity<Customer> createCustomer(@RequestBody Customer request) {
-        boolean isInserted = CustomerDAO.insertCustomer(
+        boolean isInserted = customerService.addCustomer(
                 request.getName(),
                 request.getPhone(),
                 request.getEmail(),
@@ -66,7 +76,7 @@ public class CustomerController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Customer> updateCustomer(@PathVariable int id, @RequestBody Customer request) {
-        boolean isUpdated = CustomerDAO.updateCustomer(id, request.getName());
+        boolean isUpdated = customerService.updateCustomer(id, request.getName(), request.getPhone(), request.getEmail(), request.getPass());
 
         if (isUpdated) {
             return ResponseEntity
@@ -81,7 +91,7 @@ public class CustomerController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCustomer(@PathVariable int id) {
-        boolean isDeleted = CustomerDAO.deleteCustomer(id);
+        boolean isDeleted = customerService.deleteCustomer(id);
 
         if (isDeleted) {
             return ResponseEntity.noContent().build();
