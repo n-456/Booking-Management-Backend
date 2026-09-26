@@ -12,8 +12,6 @@ import java.util.List;
 @RestController
 @RequestMapping("customers")
 @CrossOrigin(origins = "*")
-//@CrossOrigin(origins = "http://localhost:5500")
-
 public class CustomerController {
 
     private final CustomerService customerService;
@@ -22,7 +20,6 @@ public class CustomerController {
     public CustomerController(CustomerService customerService) {
         this.customerService = customerService;
     }
-
 
     @GetMapping("/{id}")
     public ResponseEntity<Customer> getAllCustomer(@PathVariable int id) {
@@ -40,7 +37,7 @@ public class CustomerController {
     }
 
     @GetMapping
-    ResponseEntity<List<Customer>> getCustomer() {
+    public ResponseEntity<List<Customer>> getCustomer() {
         List<Customer> customers = customerService.getAllCustomers();
 
         if(customers != null) {
@@ -56,17 +53,17 @@ public class CustomerController {
 
     @PostMapping
     public ResponseEntity<Customer> createCustomer(@RequestBody Customer request) {
-        boolean isInserted = customerService.addCustomer(
+        Customer savedCustomer = customerService.addCustomer(
                 request.getName(),
                 request.getPhone(),
                 request.getEmail(),
                 request.getPass()
         );
 
-        if (isInserted) {
+        if (savedCustomer != null) {
             return ResponseEntity
                     .status(HttpStatus.CREATED)
-                    .body(request);
+                    .body(savedCustomer);
         } else {
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -76,15 +73,21 @@ public class CustomerController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Customer> updateCustomer(@PathVariable int id, @RequestBody Customer request) {
-        boolean isUpdated = customerService.updateCustomer(id, request.getName(), request.getPhone(), request.getEmail(), request.getPass());
+        Customer updatedCustomer = customerService.updateCustomer(
+                id,
+                request.getName(),
+                request.getPhone(),
+                request.getEmail(),
+                request.getPass()
+        );
 
-        if (isUpdated) {
+        if (updatedCustomer != null) {
             return ResponseEntity
                     .status(HttpStatus.OK)
-                    .body(request);
+                    .body(updatedCustomer);
         } else {
             return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .status(HttpStatus.NOT_FOUND)
                     .body(null);
         }
     }
