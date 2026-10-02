@@ -22,7 +22,7 @@ public class CustomerController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Customer> getAllCustomer(@PathVariable int id) {
+    public ResponseEntity<Customer> getAllCustomer(@PathVariable long id) {
         Customer customer = customerService.getCustomerById(id);
 
         if(customer != null) {
@@ -72,7 +72,7 @@ public class CustomerController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Customer> updateCustomer(@PathVariable int id, @RequestBody Customer request) {
+    public ResponseEntity<Customer> updateCustomer(@PathVariable long id, @RequestBody Customer request) {
         Customer updatedCustomer = customerService.updateCustomer(
                 id,
                 request.getName(),
@@ -93,7 +93,7 @@ public class CustomerController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCustomer(@PathVariable int id) {
+    public ResponseEntity<Void> deleteCustomer(@PathVariable long id) {
         boolean isDeleted = customerService.deleteCustomer(id);
 
         if (isDeleted) {

@@ -51,4 +51,9 @@ public class CustomerService {
         }
         return false;
     }
+
+    public Customer checkLogin(String email, String pass) {
+        Customer customer = customerRepository.findByEmail(email);
+        return customer;
+    }
 }
