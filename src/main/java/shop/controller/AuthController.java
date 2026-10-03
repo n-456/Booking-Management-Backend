@@ -9,7 +9,7 @@ import shop.service.CustomerService;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "*", allowCredentials = "true")
 //@CrossOrigin(origins = "http://localhost:5500", allowCredentials = "true") // credentails
 
 public class AuthController {
