@@ -12,7 +12,7 @@ import shop.service.CustomerService;
 @CrossOrigin(
         origins = {
                 "http://localhost:5500",
-                "https://n-456.github.io/Booking-Management-Frontend"
+                "https://n-456.github.io"
         },
         allowCredentials = "true"
 )
