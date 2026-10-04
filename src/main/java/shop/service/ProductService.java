@@ -1,9 +1,14 @@
 package shop.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import shop.model.Product;
 import shop.repository.ProductRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+
 
 import java.util.List;
 import java.util.Optional;
@@ -54,4 +59,15 @@ public class ProductService {
         }
         return false;
     }
+
+    // Ví dụ 1: Lấy tất cả sản phẩm có phân trang và sắp xếp
+    public Page<Product> getAllProductsByPage(int page, int size, String sortBy, String direction) {
+        Sort sort = direction.equalsIgnoreCase("desc") ?
+                Sort.by(sortBy).descending() :
+                Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return productRepository.findAll(pageable);
+    }
 }
+

@@ -1,5 +1,6 @@
 package shop.controller;
 
+import org.springframework.data.domain.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,18 +38,14 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Product>> getProduct() {
-        List<Product> products = productService.getAllProducts();
-
-        if(products != null) {
-            return ResponseEntity
-                    .status(HttpStatus.OK)
-                    .body(products);
-        } else {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(null);
-        }
+    public ResponseEntity<Page<Product>> getAllProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir
+    ) {
+        Page<Product> productPage = productService.getAllProductsByPage(page, size, sortBy, sortDir);
+        return ResponseEntity.ok(productPage);
     }
 
     @PostMapping
