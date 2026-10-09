@@ -23,7 +23,7 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Product> getAllProduct(@PathVariable int id) {
+    public ResponseEntity<Product> getProduct(@PathVariable int id) {
         Product product = productService.getProductById(id);
 
         if(product != null) {
