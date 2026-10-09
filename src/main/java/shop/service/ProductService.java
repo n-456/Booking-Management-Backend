@@ -60,14 +60,18 @@ public class ProductService {
         return false;
     }
 
-    // Ví dụ 1: Lấy tất cả sản phẩm có phân trang và sắp xếp
-    public Page<Product> getAllProductsByPage(int page, int size, String sortBy, String direction) {
+    public Page<Product> getAllProductsByPage(String name, int page, int size, String sortBy, String direction) {
         Sort sort = direction.equalsIgnoreCase("desc") ?
                 Sort.by(sortBy).descending() :
                 Sort.by(sortBy).ascending();
 
         Pageable pageable = PageRequest.of(page, size, sort);
-        return productRepository.findAll(pageable);
+
+        if (name != null && !name.trim().isEmpty()) {
+            return productRepository.findByNameContainingIgnoreCase(name, pageable);
+        } else {
+            return productRepository.findAll(pageable);
+        }
     }
 }
 
