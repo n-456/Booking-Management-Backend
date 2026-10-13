@@ -6,12 +6,19 @@ import org.springframework.stereotype.Repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
+import shop.dto.OrderResponseDTO;
 import shop.model.Order;
 
 import java.util.List;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
-    @Query("SELECT o FROM Order o JOIN Customer c ON o.customerId = c.id WHERE LOWER(c.name) LIKE LOWER(CONCAT('%', :customerName, '%'))")
-    Page<Order> searchOrdersByCustomerName(@Param("customerName") String customerName, Pageable pageable);
+    @Query("SELECT new shop.dto.OrderResponseDTO(o, c.name) FROM Order o JOIN Customer c ON o.customerId = c.id WHERE LOWER(c.name) LIKE LOWER(CONCAT('%', :customerName, '%'))")
+    Page<OrderResponseDTO> searchOrdersWithCustomerName(@Param("customerName") String customerName, Pageable pageable);
+
+    @Query("SELECT new shop.dto.OrderResponseDTO(o, c.name) FROM Order o LEFT JOIN Customer c ON o.customerId = c.id")
+    Page<OrderResponseDTO> searchOrdersWithoutCustomerName(Pageable pageable);
+
+    @Query("SELECT new shop.dto.OrderResponseDTO(o, c.name) FROM Order o LEFT JOIN Customer c ON o.customerId = c.id WHERE c.name IS NULL")
+    Page<OrderResponseDTO> searchOrdersWithoutCustomer(Pageable pageable);
 }

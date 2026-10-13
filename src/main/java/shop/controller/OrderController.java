@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import shop.dto.OrderResponseDTO;
 import shop.model.Order;
 import shop.service.OrderService;
 
@@ -35,17 +36,29 @@ public class OrderController {
         }
     }
 
+    @GetMapping ("/nocustomer")
+    public ResponseEntity<Page<OrderResponseDTO>> getAllOrdersWithoutCustomer(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir
+    ) {
+        Page<OrderResponseDTO> orderPage = orderService.getAllOrdersWithoutCustomerByPage(page, size, sortBy, sortDir);
+        return ResponseEntity.ok(orderPage);
+    }
+
     @GetMapping
-    public ResponseEntity<Page<Order>> getAllOrders(
+    public ResponseEntity<Page<OrderResponseDTO>> getAllOrders(
             @RequestParam(required = false) String customerName,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy,
             @RequestParam(defaultValue = "asc") String sortDir
     ) {
-        Page<Order> orderPage = orderService.getAllOrdersByPage(customerName, page, size, sortBy, sortDir);
+        Page<OrderResponseDTO> orderPage = orderService.getAllOrdersByPage(customerName, page, size, sortBy, sortDir);
         return ResponseEntity.ok(orderPage);
     }
+
 
     @PostMapping
     public ResponseEntity<Order> createOrder(@RequestBody Order request) {

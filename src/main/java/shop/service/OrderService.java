@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import shop.dto.OrderResponseDTO;
 import shop.model.Order;
 import shop.repository.OrderRepository;
 
@@ -59,7 +60,7 @@ public class OrderService {
         return false;
     }
 
-    public Page<Order> getAllOrdersByPage(String customerName, int page, int size, String sortBy, String direction) {
+    public Page<OrderResponseDTO> getAllOrdersByPage(String customerName, int page, int size, String sortBy, String direction) {
         Sort sort = direction.equalsIgnoreCase("desc") ?
                 Sort.by(sortBy).descending() :
                 Sort.by(sortBy).ascending();
@@ -67,11 +68,22 @@ public class OrderService {
         Pageable pageable = PageRequest.of(page, size, sort);
 
         if (customerName != null && !customerName.trim().isEmpty()) {
-            return orderRepository.searchOrdersByCustomerName(customerName, pageable);
+            return orderRepository.searchOrdersWithCustomerName(customerName, pageable);
 
         } else {
-            return orderRepository.findAll(pageable);
+            return orderRepository.searchOrdersWithoutCustomerName(pageable);
         }
+    }
+
+    public Page<OrderResponseDTO> getAllOrdersWithoutCustomerByPage(int page, int size, String sortBy, String direction) {
+        Sort sort = direction.equalsIgnoreCase("desc") ?
+                Sort.by(sortBy).descending() :
+                Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        return orderRepository.searchOrdersWithoutCustomer(pageable);
+
     }
 }
 
