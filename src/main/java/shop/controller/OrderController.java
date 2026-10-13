@@ -37,12 +37,13 @@ public class OrderController {
 
     @GetMapping
     public ResponseEntity<Page<Order>> getAllOrders(
+            @RequestParam(required = false) String customerName,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy,
             @RequestParam(defaultValue = "asc") String sortDir
     ) {
-        Page<Order> orderPage = orderService.getAllOrdersByPage(page, size, sortBy, sortDir);
+        Page<Order> orderPage = orderService.getAllOrdersByPage(customerName, page, size, sortBy, sortDir);
         return ResponseEntity.ok(orderPage);
     }
 

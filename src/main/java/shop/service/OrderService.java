@@ -59,15 +59,19 @@ public class OrderService {
         return false;
     }
 
-    public Page<Order> getAllOrdersByPage(int page, int size, String sortBy, String direction) {
+    public Page<Order> getAllOrdersByPage(String customerName, int page, int size, String sortBy, String direction) {
         Sort sort = direction.equalsIgnoreCase("desc") ?
                 Sort.by(sortBy).descending() :
                 Sort.by(sortBy).ascending();
 
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        return orderRepository.findAll(pageable);
+        if (customerName != null && !customerName.trim().isEmpty()) {
+            return orderRepository.searchOrdersByCustomerName(customerName, pageable);
 
+        } else {
+            return orderRepository.findAll(pageable);
+        }
     }
 }
 

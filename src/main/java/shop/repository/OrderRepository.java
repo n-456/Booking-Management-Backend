@@ -12,5 +12,6 @@ import java.util.List;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
-
+    @Query("SELECT o FROM Order o JOIN Customer c ON o.customerId = c.id WHERE LOWER(c.name) LIKE LOWER(CONCAT('%', :customerName, '%'))")
+    Page<Order> searchOrdersByCustomerName(@Param("customerName") String customerName, Pageable pageable);
 }
