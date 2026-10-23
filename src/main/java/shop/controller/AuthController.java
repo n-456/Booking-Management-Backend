@@ -1,58 +1,50 @@
 package shop.controller;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import shop.dto.request.LoginRequest;
+import shop.dto.request.RegisterRequest;
 import shop.model.Customer;
-import shop.service.CustomerService;
+import shop.repository.CustomerRepository;
+import shop.security.CustomerDetails;
+import shop.security.JwtService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.*;
+import shop.service.DomainCustomerDetailsService;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(
-        origins = {
-                "http://localhost:5500",
-                "https://n-456.github.io"
-        },
-        allowCredentials = "true"
-)
-
-
+@RequiredArgsConstructor
 public class AuthController {
 
-    private final CustomerService customerService;
+    private final CustomerRepository customserRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
+    private final AuthenticationManager authenticationManager;
+    private final DomainCustomerDetailsService customerDetailsService;
 
-
-    public AuthController(CustomerService customerService) {
-        this.customerService = customerService;
+    @PostMapping("/register")
+    public ResponseEntity<String> register(@RequestBody RegisterRequest request) {
+        if (customserRepository.findByName(request.getUsername()).isPresent()) {
+            return ResponseEntity.badRequest().body("Username đã tồn tại!");
+        }
+        Customer customer = new Customer();
+        customer.setName(request.getUsername());
+        customer.setPass(passwordEncoder.encode(request.getPassword()));
+//        customer.setRole("ROLE_USER");
+        customserRepository.save(customer);
+        return ResponseEntity.ok("Đăng ký thành công!");
     }
 
-    // api đăng nhập
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody Customer loginRequest, HttpServletRequest request) {
-        // Kiểm tra thông tin trong database
-        Customer customer = customerService.checkLogin(loginRequest.getEmail(), loginRequest.getPass());
-
-        if (customer != null) {
-            // Tạo session và lưu thông tin user vào session
-            HttpSession session = request.getSession();
-            session.setAttribute("currentUser", customer);
-
-            return ResponseEntity.ok(customer);
-        } else {
-            return ResponseEntity.status(401).body("Email hoặc mật khẩu không đúng!");
-        }
+    public ResponseEntity<String> login(@RequestBody LoginRequest request) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
+        );
+        CustomerDetails customerDetails = customerDetailsService.loadUserByUsername(request.getUsername());
+        String token = jwtService.generateToken(customerDetails);
+        return ResponseEntity.ok(token);
     }
-
-    // api đăng xuất
-    @PostMapping("/logout")
-    public ResponseEntity<?> logout(HttpServletRequest request) {
-        // Lấy session hiện tại nhưng không tạo mới (nếu có)
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            session.invalidate(); // Hủy bỏ session
-        }
-        return ResponseEntity.ok("Đăng xuất thành công!");
-    }
-
 }

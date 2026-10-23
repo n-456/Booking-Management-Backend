@@ -32,7 +32,7 @@ public class Customer {
     @Column(name = "createdAt")
     private LocalDateTime createdAt;
 
-    Customer(){}
+    public Customer(){}
 
     public Customer(String name, String phone, String email, String pass) {
         this.name = name;
