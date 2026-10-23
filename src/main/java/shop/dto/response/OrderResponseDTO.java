@@ -1,4 +1,4 @@
-package shop.dto;
+package shop.dto.response;
 
 import shop.model.Order;
 
