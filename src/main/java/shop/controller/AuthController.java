@@ -17,6 +17,7 @@ import shop.service.DomainCustomerDetailsService;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 public class AuthController {
 
     private final CustomerRepository customserRepository;
