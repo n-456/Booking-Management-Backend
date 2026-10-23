@@ -6,7 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import shop.dto.OrderResponseDTO;
+import shop.dto.response.OrderResponseDTO;
 import shop.model.Order;
 import shop.repository.OrderRepository;
 

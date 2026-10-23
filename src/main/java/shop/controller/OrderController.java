@@ -5,7 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import shop.dto.OrderResponseDTO;
+import shop.dto.response.OrderResponseDTO;
 import shop.model.Order;
 import shop.service.OrderService;
 
