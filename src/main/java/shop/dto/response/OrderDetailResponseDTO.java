@@ -1,16 +1,26 @@
 package shop.dto.response;
 
 public class OrderDetailResponseDTO {
+    private Long id;
     private String name;
     private String category;
     private int price;
     private String img;
 
-    public OrderDetailResponseDTO(String name, String category, int price, String img) {
+    public OrderDetailResponseDTO(Long id, String name, String category, int price, String img) {
+        this.id = id;
         this.name = name;
         this.category = category;
         this.price = price;
         this.img = img;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {
