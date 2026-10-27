@@ -24,6 +24,13 @@ public class OrderDetailService {
         this.orderDetailRepository = orderDetailRepository;
     }
 
+    public Page<OrderDetail> getOrderDetailsByOrderId(int orderId, int page, int size, String sortBy, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        return orderDetailRepository.findByOrderId(orderId, pageable);
+    }
+    
     public OrderDetail getOrderDetailById(long id) {
         return orderDetailRepository.findById(id).orElse(null);
     }

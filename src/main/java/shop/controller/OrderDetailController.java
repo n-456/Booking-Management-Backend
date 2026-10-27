@@ -35,14 +35,35 @@ public class OrderDetailController {
         }
     }
 
+//    @GetMapping
+//    public ResponseEntity<Page<OrderDetail>> getAllOrders(
+//            @RequestParam(defaultValue = "0") int page,
+//            @RequestParam(defaultValue = "10") int size,
+//            @RequestParam(defaultValue = "id") String sortBy,
+//            @RequestParam(defaultValue = "asc") String sortDir
+//    ) {
+//        Page<OrderDetail> orderPage = orderDetailService.getAllOrderDetailsByPage(page, size, sortBy, sortDir);
+//        return ResponseEntity.ok(orderPage);
+//    }
+
     @GetMapping
     public ResponseEntity<Page<OrderDetail>> getAllOrders(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy,
-            @RequestParam(defaultValue = "asc") String sortDir
+            @RequestParam(defaultValue = "asc") String sortDir,
+            @RequestParam(required = false) Integer orderId // Thêm tham số này (không bắt buộc)
     ) {
-        Page<OrderDetail> orderPage = orderDetailService.getAllOrderDetailsByPage(page, size, sortBy, sortDir);
+        Page<OrderDetail> orderPage;
+
+        if (orderId != null) {
+            // Nếu có truyền orderId, gọi hàm lọc theo orderId ở Service
+            orderPage = orderDetailService.getOrderDetailsByOrderId(orderId, page, size, sortBy, sortDir);
+        } else {
+            // Nếu không, lấy toàn bộ như cũ
+            orderPage = orderDetailService.getAllOrderDetailsByPage(page, size, sortBy, sortDir);
+        }
+
         return ResponseEntity.ok(orderPage);
     }
 
