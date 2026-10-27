@@ -21,7 +21,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query("SELECT new shop.dto.response.OrderResponseDTO(o, c.name) FROM Order o LEFT JOIN Customer c ON o.customerId = c.id WHERE c.name IS NULL")
     Page<OrderResponseDTO> searchOrdersWithoutCustomer(Pageable pageable);
 
-    @Query("SELECT new shop.dto.response.OrderDetailResponseDTO(p.name, p.category, p.unitPrice, p.img) " +
+    @Query("SELECT new shop.dto.response.OrderDetailResponseDTO(od.id, p.name, p.category, p.unitPrice, p.img) " +
             "FROM Order o " +
             "JOIN OrderDetail od ON o.id = od.orderId " +
             "JOIN Product p ON od.productId = p.id " +

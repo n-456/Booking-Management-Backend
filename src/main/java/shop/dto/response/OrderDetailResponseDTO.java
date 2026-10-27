@@ -1,7 +1,5 @@
 package shop.dto.response;
 
-import shop.model.Order;
-
 public class OrderDetailResponseDTO {
     private String name;
     private String category;
